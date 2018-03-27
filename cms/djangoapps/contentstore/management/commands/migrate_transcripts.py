@@ -24,7 +24,7 @@ class Command(BaseCommand):
     """
     Example usage:
         $ ./manage.py cms migrate_transcripts --all-courses --force-update --commit
-        $ ./manage.py cms migrate_transcripts 'edX/DemoX/Demo_Course' --force-update --commit
+        $ ./manage.py cms migrate_transcripts --course-id 'Course1' -course-id 'Course2' --commit
     """
     args = '<course_id course_id ...>'
     help = 'Migrates transcripts to S3 for one or more courses.'
@@ -33,6 +33,11 @@ class Command(BaseCommand):
         """
         Add arguments to the command parser.
         """
+        parser.add_argument(
+            '--course-id',
+            dest='course_id',
+            action='append'
+        )
         parser.add_argument(
             '--all-courses', '--all',
             dest='all_courses',
@@ -72,15 +77,15 @@ class Command(BaseCommand):
         """
         Invokes the migrate transcripts enqueue function.
         """
-        course_ids = args
+        course_ids = options['course_id']
         all_option = options['all_courses']
+        if course_ids is None:
+            course_ids = []
 
-        if (not len(course_ids) and not all_option) or \
-                (len(course_ids) and all_option):
+        if (not len(course_ids) and not all_option) or (len(course_ids) and all_option):
             raise CommandError("At least one course or --all-courses must be specified.")
 
         kwargs = {key: options[key] for key in ['all_courses', 'force_update', 'commit'] if options.get(key)}
-
         course_keys = map(self._parse_course_key, course_ids)
 
         try:

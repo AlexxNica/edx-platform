@@ -68,7 +68,7 @@ class TestArgParsing(TestCase):
     def test_invalid_course(self):
         errstring = "Invalid course_key: 'invalid-course'."
         with self.assertRaisesRegexp(CommandError, errstring):
-            call_command('migrate_transcripts', 'invalid-course')
+            call_command('migrate_transcripts', '--course-id', 'invalid-course')
 
 
 class TestMigrateTranscripts(ModuleStoreTestCase):
@@ -127,7 +127,7 @@ class TestMigrateTranscripts(ModuleStoreTestCase):
         self.assertFalse(api.is_transcript_available(self.video_descriptor.edx_video_id, 'ge'))
 
         # now call migrate_transcripts command and check the transcript availability
-        call_command('migrate_transcripts', unicode(self.course.id), '--commit')
+        call_command('migrate_transcripts', '--course-id', unicode(self.course.id), '--commit')
 
         languages = api.get_available_transcript_languages(self.video_descriptor.edx_video_id)
         self.assertEqual(len(languages), 2)
@@ -145,7 +145,7 @@ class TestMigrateTranscripts(ModuleStoreTestCase):
         self.assertFalse(api.is_transcript_available(self.video_descriptor.edx_video_id, 'ge'))
 
         # now call migrate_transcripts command and check the transcript availability
-        call_command('migrate_transcripts', unicode(self.course.id))
+        call_command('migrate_transcripts', '--course-id', unicode(self.course.id))
 
         # check that transcripts still do not exist
         languages = api.get_available_transcript_languages(self.video_descriptor.edx_video_id)
@@ -163,7 +163,7 @@ class TestMigrateTranscripts(ModuleStoreTestCase):
         self.assertFalse(api.is_transcript_available(self.video_descriptor.edx_video_id, 'ge'))
 
         # now call migrate_transcripts command and check the transcript availability
-        call_command('migrate_transcripts', unicode(self.course.id), '--commit')
+        call_command('migrate_transcripts', '--course-id', unicode(self.course.id), '--commit')
 
         self.assertTrue(api.is_transcript_available(self.video_descriptor.edx_video_id, 'hr'))
         self.assertTrue(api.is_transcript_available(self.video_descriptor.edx_video_id, 'ge'))
@@ -178,19 +178,19 @@ class TestMigrateTranscripts(ModuleStoreTestCase):
         self.assertFalse(api.is_transcript_available(self.video_descriptor.edx_video_id, 'ge'))
 
         # now call migrate_transcripts command and check the transcript availability
-        call_command('migrate_transcripts', unicode(self.course.id), '--commit')
+        call_command('migrate_transcripts', '--course-id', unicode(self.course.id), '--commit')
 
         self.assertTrue(api.is_transcript_available(self.video_descriptor.edx_video_id, 'hr'))
         self.assertTrue(api.is_transcript_available(self.video_descriptor.edx_video_id, 'ge'))
 
         # now call migrate_transcripts command again and check the transcript availability
-        call_command('migrate_transcripts', unicode(self.course.id), '--commit')
+        call_command('migrate_transcripts', '--course-id', unicode(self.course.id), '--commit')
 
         self.assertTrue(api.is_transcript_available(self.video_descriptor.edx_video_id, 'hr'))
         self.assertTrue(api.is_transcript_available(self.video_descriptor.edx_video_id, 'ge'))
 
         # now call migrate_transcripts command with --force-update and check the transcript availability
-        call_command('migrate_transcripts', unicode(self.course.id), '--force-update', '--commit')
+        call_command('migrate_transcripts', '--course-id', unicode(self.course.id), '--force-update', '--commit')
 
         self.assertTrue(api.is_transcript_available(self.video_descriptor.edx_video_id, 'hr'))
         self.assertTrue(api.is_transcript_available(self.video_descriptor.edx_video_id, 'ge'))
@@ -219,7 +219,7 @@ class TestMigrateTranscripts(ModuleStoreTestCase):
         )
 
         with LogCapture(LOGGER_NAME, level=logging.INFO) as logger:
-            call_command('migrate_transcripts', unicode(self.course.id))
+            call_command('migrate_transcripts', '--course-id', unicode(self.course.id))
             logger.check(
                 *expected_log
             )
