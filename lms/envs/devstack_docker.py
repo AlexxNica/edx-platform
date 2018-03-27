@@ -52,7 +52,7 @@ MKTG_URLS = {
     'AFFILIATES': '/affiliates',
     'BLOG': '/blog',
     'CAREERS': '/careers',
-    'CONTACT': 'https://courses.edx.org/support/contact_us',
+    'CONTACT': '/support/contact_us',
     'COURSES': '/course',
     'DONATE': '/donate',
     'ENTERPRISE': '/enterprise',
